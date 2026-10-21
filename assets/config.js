@@ -2,7 +2,7 @@
 // Tempel URL Web App Apps Script (berakhiran /exec) di API_URL.
 // Selama API_URL kosong, halaman berjalan dalam MODE DEMO (data hanya tersimpan di browser).
 window.APP_CONFIG = {
-  API_URL: '',
+  API_URL: 'https://script.google.com/macros/s/AKfycbypl0nrGMtW4ldXXS_4B3ReDsNPycJBrlUZQMpIqoIRQTiuSDIDlaLcNN3jzkFkeYAK/exec',
 
   // Hanya dipakai di mode demo. Jam tutup yang berlaku diatur dari halaman admin.
   DEMO_CLOSE_TIME: '2026-10-22T14:00:00+07:00',
