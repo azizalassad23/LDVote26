@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin · Voting House</title>
+  <meta name="theme-color" content="#1D1512">
+  <link rel="icon" href="assets/logo-sma-gunung-madu.webp" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Smythe&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="demo-banner" id="demoBanner" hidden>MODE DEMO — password admin: <b>admin</b>. Isi API_URL di assets/config.js untuk memakai Google Sheet.</div>
+
+  <div class="stage">
+    <div class="stage__inner">
+      <span class="stage__label"><i class="stage__dot"></i>Panel Admin · Voting House</span>
+      <a class="stage__time" href="./" style="color:inherit">← Halaman voting</a>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Login -->
+    <section id="viewLogin">
+      <div class="emblem"><img src="assets/logo-sma-gunung-madu.webp" alt="Logo SMA Gunung Madu" width="400" height="400"></div>
+      <form class="card card--narrow" id="loginForm">
+        <h3>Masuk Admin</h3>
+        <p class="sub">Halaman ini hanya untuk panitia.</p>
+        <p class="form-error" id="loginError" role="alert" hidden></p>
+        <div class="field">
+          <label for="password">Password</label>
+          <input class="input" id="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="btn btn--primary btn--block" type="submit" id="loginBtn">Masuk</button>
+      </form>
+    </section>
+
+    <!-- Dasbor -->
+    <section id="viewAdmin" hidden>
+      <div class="admin-top">
+        <div>
+          <p class="eyebrow">Literacy Day 2026</p>
+          <h2 class="title-display">Panel Admin</h2>
+        </div>
+        <div class="row-actions">
+          <button class="btn btn--ghost btn--small" type="button" id="refreshBtn">Muat ulang data</button>
+          <button class="btn btn--ghost btn--small" type="button" id="logoutBtn">Keluar</button>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <div class="card">
+          <h3>Status</h3>
+          <p class="sub" id="statusSub">—</p>
+          <div class="kv">
+            <div><span>Status voting</span><b id="kvStatus">—</b></div>
+            <div><span>Ditutup pada</span><b id="kvClose">—</b></div>
+            <div><span>Sisa waktu</span><b id="kvLeft">—</b></div>
+            <div><span>Total suara</span><b id="kvTotal">0</b></div>
+            <div><span>Siswa / Guru</span><b id="kvRoles">0 / 0</b></div>
+            <div><span>Daftar NIS (sheet NIS)</span><b id="kvNis">—</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Kelola House</h3>
+          <p class="sub">Format: <b>Nama House - Tipe Display</b>. Ubah nama di bawah, lalu tekan <b>Simpan Daftar House</b>. Suara yang sudah masuk tetap aman saat nama diubah.</p>
+          <ol class="edit-list" id="editList"></ol>
+          <div class="row-actions" style="margin-bottom:22px">
+            <button class="btn btn--ghost btn--small" type="button" id="addRow">+ Tambah house</button>
+          </div>
+
+          <div class="field">
+            <label for="bulkInput">Tempel banyak sekaligus (satu house per baris)</label>
+            <textarea class="input" id="bulkInput" placeholder="Enggang - Rumah Panjang Dayak&#10;Siger - Kain Tapis Lampung&#10;Rencong - Tari Saman Aceh"></textarea>
+            <div class="row-actions">
+              <button class="btn btn--ghost btn--small" type="button" id="bulkAdd">Tambahkan ke daftar</button>
+              <button class="btn btn--ghost btn--small" type="button" id="bulkReplace">Ganti seluruh daftar</button>
+            </div>
+          </div>
+
+          <button class="btn btn--primary btn--block" type="button" id="saveHouses">Simpan Daftar House</button>
+        </div>
+
+        <div class="card">
+          <h3>Pengaturan</h3>
+          <p class="sub">Semua waktu dalam WIB (UTC+7). Setelah jam tutup, halaman voting otomatis menampilkan pemenang.</p>
+          <div class="field">
+            <label for="closeInput">Voting ditutup pada</label>
+            <input class="input" id="closeInput" type="datetime-local" step="60">
+          </div>
+          <div class="field">
+            <label for="teacherInput">Kode verifikasi guru</label>
+            <input class="input" id="teacherInput" type="text" autocomplete="off">
+          </div>
+          <div class="field">
+            <label class="check"><input type="checkbox" id="nisUniqueInput"> <span>Satu NIS (4 digit terakhir) hanya boleh memilih sekali.<br><span class="hint">Aktifkan hanya jika 4 digit terakhir NIS di sekolah tidak ada yang sama.</span></span></label>
+          </div>
+          <button class="btn btn--primary btn--block" type="button" id="saveSettings">Simpan Pengaturan</button>
+        </div>
+
+        <div class="card">
+          <h3>Perolehan Suara (Live)</h3>
+          <p class="sub">Hanya terlihat di panel admin sampai voting ditutup. Diperbarui tiap 30 detik.</p>
+          <ol class="ranks" id="liveList"></ol>
+        </div>
+
+        <div class="card">
+          <h3>Perangkat Ini</h3>
+          <p class="sub">Untuk uji coba: hapus tanda “sudah memilih” di browser ini agar bisa mencoba voting lagi. Tidak menghapus suara di database.</p>
+          <button class="btn btn--ghost btn--small" type="button" id="resetDevice">Reset status voting perangkat ini</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/api.js"></script>
+  <script src="assets/ornament.js"></script>
+  <script src="assets/admin.js"></script>
+</body>
+</html>

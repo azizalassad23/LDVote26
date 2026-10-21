@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Voting House · Literacy Day 2026</title>
+  <meta name="description" content="Voting house Literacy Day 2026 — Exploring Ethnics as Cultural Heritages, SMA Gunung Madu.">
+  <meta name="theme-color" content="#1D1512">
+  <link rel="icon" href="assets/logo-sma-gunung-madu.webp" type="image/webp">
+  <link rel="apple-touch-icon" href="assets/logo-sma-gunung-madu.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Smythe&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="demo-banner" id="demoBanner" hidden>MODE DEMO — data hanya tersimpan di browser ini. Isi API_URL di assets/config.js.</div>
+
+  <header class="hero">
+    <div class="ornament ornament--left" data-ornament="panel" aria-hidden="true"></div>
+    <div class="ornament ornament--right" data-ornament="panel" aria-hidden="true"></div>
+    <div class="hero__inner">
+      <button class="emblem" id="emblem" type="button" aria-label="SMA Gunung Madu">
+        <img src="assets/logo-sma-gunung-madu.webp" alt="Logo SMA Gunung Madu" width="400" height="400">
+      </button>
+      <h1 class="hero__title">Literacy Day <span class="hero__year">2026</span></h1>
+      <p class="hero__tagline">Exploring Ethnics as Cultural Heritages</p>
+      <div class="flourish" data-ornament="flourish" aria-hidden="true"></div>
+      <p class="hero__meta">22 Oktober 2026<span>|</span>SMA Gunung Madu</p>
+    </div>
+  </header>
+
+  <div class="stage" id="stage">
+    <div class="stage__inner">
+      <span class="stage__label"><i class="stage__dot"></i><span id="stageLabel">Voting House</span></span>
+      <span class="stage__time" id="stageTime" aria-live="off">Memuat…</span>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Memuat -->
+    <section id="viewLoading" class="view">
+      <div class="loader" role="status">Menghubungkan ke server…</div>
+    </section>
+
+    <!-- Voting -->
+    <section id="viewVote" class="view" hidden>
+      <div class="section-head">
+        <p class="eyebrow">Voting House</p>
+        <h2>Pilih House Favoritmu</h2>
+        <p class="lead">Satu orang, satu suara. Pilih house dengan display budaya terbaik menurutmu.</p>
+      </div>
+
+      <ol class="steps" aria-label="Langkah voting">
+        <li id="stepDot1" class="is-active"><span>1</span>Verifikasi</li>
+        <li id="stepDot2"><span>2</span>Pilih House</li>
+      </ol>
+
+      <form id="stepIdentity" class="card card--narrow" novalidate>
+        <div class="segmented" role="group" aria-label="Saya adalah">
+          <button type="button" data-role="siswa" aria-pressed="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+            Siswa
+          </button>
+          <button type="button" data-role="guru" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M5 21v-1a7 7 0 0 1 14 0v1"/></svg>
+            Guru
+          </button>
+        </div>
+
+        <p class="form-error" id="identityError" role="alert" hidden></p>
+
+        <div class="field">
+          <label for="codeInput" id="codeLabel">4 Angka Terakhir NIS</label>
+          <input class="input input--code" id="codeInput" name="code" type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="0000" required>
+          <p class="hint" id="codeHint">Contoh: NIS 2526<b>0123</b> → ketik <b>0123</b></p>
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit">Lanjut Pilih House</button>
+      </form>
+
+      <div id="stepHouse" hidden>
+        <div class="who">
+          <span id="whoText"></span>
+          <button type="button" class="link-btn" id="changeIdentity">Ganti</button>
+        </div>
+        <div class="houses" id="houseList" role="radiogroup" aria-label="Daftar house"></div>
+        <div class="vote-bar">
+          <div class="vote-bar__text">Pilihanmu<strong id="choiceText">Belum memilih</strong></div>
+          <button type="button" class="btn btn--gold" id="openConfirm" disabled>Kirim Suara</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sudah memilih -->
+    <section id="viewVoted" class="view" hidden>
+      <div class="card card--narrow voted">
+        <div class="voted__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></div>
+        <h2 class="title-display">Terima Kasih!</h2>
+        <p class="lead">Suaramu sudah tercatat. Perangkat ini tidak dapat digunakan untuk memilih lagi.</p>
+        <div class="voted__choice">
+          <span class="tag">Pilihanmu</span>
+          <p class="house__name" id="votedName">—</p>
+          <p class="hint" id="votedDisplay"></p>
+        </div>
+        <p class="hint">Pemenang diumumkan otomatis di halaman ini pukul <b id="votedClose">14.00 WIB</b></p>
+        <div class="countdown" id="votedCountdown" aria-hidden="true">
+          <div><b data-unit="h">00</b><small>Jam</small></div>
+          <div><b data-unit="m">00</b><small>Menit</small></div>
+          <div><b data-unit="s">00</b><small>Detik</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hasil -->
+    <section id="viewResults" class="view" hidden>
+      <div class="winner">
+        <div class="winner__orn winner__orn--tl" data-ornament="swirl" aria-hidden="true"></div>
+        <div class="winner__orn winner__orn--br" data-ornament="swirl" aria-hidden="true"></div>
+        <div class="winner__inner">
+          <div class="winner__crown" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7.5 7.5 11 12 4l4.5 7L21 7.5 19.5 18h-15L3 7.5Z"/><rect x="4.5" y="19" width="15" height="2" rx="1"/></svg></div>
+          <p class="eyebrow" id="winnerEyebrow">Pemenang Voting House</p>
+          <div class="winner__list" id="winnerList"></div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b id="statTotal">0</b><span>Total suara</span></div>
+        <div class="stat"><b id="statSiswa">0</b><span>Suara siswa</span></div>
+        <div class="stat"><b id="statGuru">0</b><span>Suara guru</span></div>
+      </div>
+
+      <div class="section-head">
+        <p class="eyebrow">Transparansi</p>
+        <h2>Rekap Perolehan Suara</h2>
+        <p class="lead">Seluruh house beserta tipe display dan jumlah suara yang diperoleh.</p>
+      </div>
+      <ol class="ranks" id="rankList"></ol>
+      <p class="note" id="resultsNote"></p>
+    </section>
+
+    <!-- Galat -->
+    <section id="viewError" class="view" hidden>
+      <div class="card card--narrow" style="text-align:center">
+        <h2 class="title-display">Ups!</h2>
+        <p class="lead" id="errorText">Terjadi kesalahan.</p>
+        <p><button class="btn btn--primary" type="button" id="retryBtn">Coba Lagi</button></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="flourish" data-ornament="flourish" aria-hidden="true"></div>
+    Literacy Day 2026 · SMA Gunung Madu
+  </footer>
+
+  <dialog id="confirmDialog" aria-labelledby="confirmTitle">
+    <form method="dialog" class="dialog__body">
+      <h3 id="confirmTitle">Yakin dengan pilihanmu?</h3>
+      <p class="hint">Suara hanya bisa diberikan satu kali dan tidak dapat diubah.</p>
+      <div class="dialog__choice">
+        <p class="house__name" id="confirmName"></p>
+        <span class="tag">Tipe Display</span>
+        <strong id="confirmDisplay"></strong>
+      </div>
+      <p class="form-error" id="confirmError" role="alert" hidden></p>
+      <div class="dialog__actions">
+        <button class="btn btn--ghost" value="cancel" id="cancelVote">Batal</button>
+        <button class="btn btn--primary" type="button" id="submitVote">Ya, Kirim</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/api.js"></script>
+  <script src="assets/ornament.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
