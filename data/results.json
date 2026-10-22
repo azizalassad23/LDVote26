@@ -1,0 +1,148 @@
+{
+  "ok": true,
+  "closeTime": "2026-10-22T07:00:00.000Z",
+  "generatedAt": "2026-10-22T07:01:47.353Z",
+  "total": 121,
+  "siswa": 105,
+  "guru": 16,
+  "results": [
+    {
+      "id": "H9a3cd8c9",
+      "name": "Ortuseight",
+      "display": "Photobooth - Sumsel",
+      "votes": 13
+    },
+    {
+      "id": "Ha9aa5f10",
+      "name": "Visval",
+      "display": "Photobooth - Sulawesi Selatan",
+      "votes": 13
+    },
+    {
+      "id": "Hc9b6a1b5",
+      "name": "Viva",
+      "display": "Pameran - Jawa Timur",
+      "votes": 12
+    },
+    {
+      "id": "H74d3b3a3",
+      "name": "Sari Ayu",
+      "display": "Kuliner - Jawa Tengah",
+      "votes": 8
+    },
+    {
+      "id": "H69949792",
+      "name": "Greenlight",
+      "display": "Pameran - DKI Jakarta",
+      "votes": 7
+    },
+    {
+      "id": "H793b9a61",
+      "name": "Ventela",
+      "display": "Photobooth - Sumut",
+      "votes": 6
+    },
+    {
+      "id": "H70c5a031",
+      "name": "3Second",
+      "display": "Photobooth - Bengkulu",
+      "votes": 6
+    },
+    {
+      "id": "Hd7411725",
+      "name": "Nevada",
+      "display": "Pameran - Lampung",
+      "votes": 6
+    },
+    {
+      "id": "Heccd3b95",
+      "name": "Erigo",
+      "display": "Kuliner - Bangka Belitung",
+      "votes": 5
+    },
+    {
+      "id": "He96012eb",
+      "name": "Mustika Ratu",
+      "display": "Photobooth - Jawa Barat",
+      "votes": 5
+    },
+    {
+      "id": "H29627edb",
+      "name": "Rei",
+      "display": "Pameran - Papua",
+      "votes": 5
+    },
+    {
+      "id": "Hbd6f220c",
+      "name": "Aerostreet",
+      "display": "Photobooth - Riau",
+      "votes": 4
+    },
+    {
+      "id": "H79212677",
+      "name": "Kodachi",
+      "display": "Kuliner - Jambi",
+      "votes": 4
+    },
+    {
+      "id": "H19c3fbd1",
+      "name": "Roughneck 1991",
+      "display": "Kuliner - Banten",
+      "votes": 4
+    },
+    {
+      "id": "Hce2b2405",
+      "name": "Wardah",
+      "display": "Kuliner - Yogyakarta",
+      "votes": 4
+    },
+    {
+      "id": "H56ec775d",
+      "name": "Brodo",
+      "display": "Photobooth - Sumbar",
+      "votes": 3
+    },
+    {
+      "id": "He2d363ad",
+      "name": "Herboist",
+      "display": "Pameran - NTT",
+      "votes": 3
+    },
+    {
+      "id": "Had42156b",
+      "name": "Exsport",
+      "display": "Kuliner - Maluku",
+      "votes": 3
+    },
+    {
+      "id": "H048446ea",
+      "name": "Compass",
+      "display": "Kuliner - Aceh",
+      "votes": 2
+    },
+    {
+      "id": "H702edb06",
+      "name": "Purbasari",
+      "display": "Kuliner - Bali",
+      "votes": 2
+    },
+    {
+      "id": "H98b1f7ac",
+      "name": "Eiger",
+      "display": "Kuliner - NTB",
+      "votes": 2
+    },
+    {
+      "id": "Hac55a1a4",
+      "name": "Bodypack",
+      "display": "Pameran - Kalimantan",
+      "votes": 2
+    },
+    {
+      "id": "H2e12c6ff",
+      "name": "Kalibre",
+      "display": "Kuliner - Sulawesi Utara",
+      "votes": 2
+    }
+  ]
+}
