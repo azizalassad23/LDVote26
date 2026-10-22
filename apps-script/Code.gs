@@ -67,11 +67,24 @@ function fail_(error, extra) {
 
 // ---------------------------------------------------------------- Public
 
-function publicConfig_() {
-  const base = cached_('config', 15, () => {
+/**
+ * Pengaturan + daftar house, di-cache 30 detik. Dipakai oleh semua permintaan publik dan vote
+ * supaya tidak membaca sheet setiap kali (Apps Script hanya sanggup ±30 eksekusi bersamaan).
+ */
+function state_() {
+  return cached_('config', 30, () => {
     const s = getSettings_();
-    return { closeTime: closeDate_(s).toISOString(), houses: getHouses_() };
+    return {
+      closeTime: closeDate_(s).toISOString(),
+      teacherCode: String(s.TEACHER_CODE).trim(),
+      nisUnique: isTrue_(s.NIS_UNIQUE),
+      houses: getHouses_(),
+    };
   });
+}
+
+function publicConfig_() {
+  const base = state_();
   const now = new Date();
   return {
     ok: true,
@@ -83,17 +96,17 @@ function publicConfig_() {
 }
 
 function publicResults_() {
-  const s = getSettings_();
+  const closeTime = state_().closeTime;
   const now = new Date();
-  if (now < closeDate_(s)) return fail_('not_closed', { closeTime: closeDate_(s).toISOString() });
-  const tally = cached_('results', 20, tally_);
-  return Object.assign({ ok: true, closeTime: closeDate_(s).toISOString(), generatedAt: now.toISOString() }, tally);
+  if (now < new Date(closeTime)) return fail_('not_closed', { closeTime: closeTime });
+  const tally = cached_('results', 60, tally_);
+  return Object.assign({ ok: true, closeTime: closeTime, generatedAt: now.toISOString() }, tally);
 }
 
 function vote_(b) {
-  const s = getSettings_();
+  const st = state_();
   const now = new Date();
-  if (now >= closeDate_(s)) return fail_('closed');
+  if (now >= new Date(st.closeTime)) return fail_('closed');
 
   const role = b.role === 'siswa' || b.role === 'guru' ? b.role : null;
   if (!role) return fail_('bad_request');
@@ -112,15 +125,15 @@ function vote_(b) {
     if (!/^\d{4}$/.test(code)) return fail_('nis_format');
     const whitelist = getNisWhitelist_();
     if (whitelist && !whitelist[code]) return fail_('nis_invalid');
-  } else if (code !== String(s.TEACHER_CODE).trim()) {
+  } else if (code !== st.teacherCode) {
     return fail_('teacher_invalid');
   }
 
-  const house = getHouses_().filter((h) => h.id === String(b.houseId))[0];
+  const house = st.houses.filter((h) => h.id === String(b.houseId))[0];
   if (!house) return fail_('house_invalid');
 
   const lock = LockService.getScriptLock();
-  if (!lock.tryLock(20000)) return fail_('busy');
+  if (!lock.tryLock(8000)) return fail_('busy');
   let result;
   try {
     if (voteId) {
@@ -128,21 +141,40 @@ function vote_(b) {
       if (prev) return JSON.parse(prev);
     }
     const sheet = getSheet_('Votes');
-    if (role === 'siswa' && isTrue_(s.NIS_UNIQUE)) {
-      const last = sheet.getLastRow();
-      const rows = last > 1 ? sheet.getRange(2, 2, last - 1, 2).getValues() : [];
-      const used = rows.some((r) => r[0] === 'Siswa' && pad4_(r[1]) === code);
-      if (used) return fail_('nis_used');
+    const props = PropertiesService.getScriptProperties();
+    if (role === 'siswa' && st.nisUnique) {
+      syncNisIndex_(sheet, props);
+      if (props.getProperty('nis_' + code)) return fail_('nis_used');
     }
     sheet.appendRow([now, role === 'siswa' ? 'Siswa' : 'Guru', role === 'siswa' ? code : 'GURU',
       house.id, house.name, house.display, deviceId, voteId]);
     SpreadsheetApp.flush();
+    if (role === 'siswa') props.setProperty('nis_' + code, '1');
+    props.setProperty('NIS_INDEX_ROWS', String(sheet.getLastRow()));
     result = { ok: true, house: house, at: now.toISOString() };
     if (voteId) cache.put('vote_' + voteId, JSON.stringify(result), 21600);
   } finally {
     lock.releaseLock();
   }
   return result;
+}
+
+/**
+ * Indeks NIS yang sudah memilih disimpan di Script Properties agar cek "1 NIS sekali" tidak membaca
+ * seluruh sheet Votes pada setiap suara. Indeks dibangun ulang bila jumlah baris Votes berubah
+ * di luar script (mis. baris uji coba dihapus manual).
+ */
+function syncNisIndex_(sheet, props) {
+  const last = sheet.getLastRow();
+  if (props.getProperty('NIS_INDEX_ROWS') === String(last)) return;
+  const fresh = {};
+  if (last > 1) {
+    sheet.getRange(2, 2, last - 1, 2).getValues().forEach((r) => {
+      if (r[0] === 'Siswa') fresh['nis_' + pad4_(r[1])] = '1';
+    });
+  }
+  fresh.NIS_INDEX_ROWS = String(last);
+  props.setProperties(fresh, true); // true = hapus properti lama
 }
 
 // ---------------------------------------------------------------- Admin

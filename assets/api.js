@@ -6,9 +6,15 @@
   const demo = !/^https:\/\/script\.google(usercontent)?\.com\//.test(API_URL);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+  // Saat server penuh, Google bisa menggantung permintaan hingga ±1 menit lalu gagal.
+  // Batasi tiap percobaan lalu ulangi dengan jeda acak agar tidak menyerbu server bersamaan.
+  const TIMEOUT_MS = 20000;
+
   async function request(params, body, tries) {
     let lastErr;
     for (let i = 0; i < tries; i++) {
+      const ctrl = window.AbortController ? new AbortController() : null;
+      const timer = ctrl && setTimeout(() => ctrl.abort(), TIMEOUT_MS);
       try {
         const res = body
           ? await fetch(API_URL, {
@@ -16,13 +22,16 @@
               // text/plain agar tidak memicu preflight CORS yang tidak didukung Apps Script.
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify(body),
+              signal: ctrl && ctrl.signal,
             })
-          : await fetch(API_URL + '?' + new URLSearchParams(Object.assign({ t: Date.now() }, params)), { cache: 'no-store' });
+          : await fetch(API_URL + '?' + new URLSearchParams(Object.assign({ t: Date.now() }, params)), { cache: 'no-store', signal: ctrl && ctrl.signal });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return await res.json();
       } catch (err) {
         lastErr = err;
-        if (i < tries - 1) await sleep(700 * Math.pow(2, i));
+        if (i < tries - 1) await sleep(1000 * Math.pow(2, i) + Math.random() * 1500);
+      } finally {
+        clearTimeout(timer);
       }
     }
     const err = new Error('network');
@@ -31,8 +40,8 @@
   }
 
   const remote = {
-    config: () => request({ action: 'config' }, null, 3),
-    results: () => request({ action: 'results' }, null, 3),
+    config: () => request({ action: 'config' }, null, 4),
+    results: () => request({ action: 'results' }, null, 4),
     async vote(payload) {
       // voteId membuat retry aman: server tidak menghitung suara yang sama dua kali.
       for (let i = 0; i < 3; i++) {

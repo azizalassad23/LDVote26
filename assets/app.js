@@ -90,9 +90,10 @@
       stage.classList.add('is-closed');
       $('#stageLabel').textContent = 'Voting Ditutup';
       $('#stageTime').innerHTML = 'Hasil akhir · ditutup <strong>' + esc(fmtTime(state.closeAt)) + '</strong>';
-      if (!state.resultsRequested) loadResults();
+      if (!state.resultsRequested) loadResults(state.wasOpen);
       return;
     }
+    state.wasOpen = true;
     stage.classList.remove('is-closed');
     $('#stageLabel').textContent = 'Voting Dibuka';
     const t = split(left);
@@ -238,14 +239,19 @@
   }
 
   // ------------------------------------------------------------ Hasil
-  async function loadResults() {
+  async function loadResults(spread) {
     state.resultsRequested = true;
     if ($('#viewResults').hidden) show('viewLoading');
+    // Tepat jam tutup semua perangkat meminta hasil bersamaan; sebar dalam 0–25 detik.
+    if (spread) {
+      $('#viewLoading .loader').textContent = 'Menghitung hasil akhir…';
+      await new Promise((r) => setTimeout(r, Math.random() * 25000));
+    }
     let res;
     try {
       res = await Api.results();
     } catch (e) {
-      showError(errorText('network'), loadResults);
+      showError(errorText('network'), () => loadResults());
       return;
     }
     if (res.ok) {
@@ -265,7 +271,7 @@
       }
       return;
     }
-    showError(errorText(res.error), loadResults);
+    showError(errorText(res.error), () => loadResults());
   }
 
   function renderResults(r) {
@@ -357,7 +363,7 @@
   }
 
   async function refreshConfig() {
-    if (state.resultsRequested) return;
+    if (state.resultsRequested || document.hidden) return;
     try {
       const cfg = await Api.config();
       if (!cfg.ok) return;
@@ -375,12 +381,16 @@
     if (Api.demo) $('#demoBanner').hidden = false;
     bind();
     let cfg;
+    const slow = setTimeout(() => {
+      $('#viewLoading .loader').textContent = 'Server sedang ramai, mohon tunggu sebentar…';
+    }, 6000);
     try {
       cfg = await Api.config();
     } catch (e) {
       showError(errorText('network'), () => location.reload());
       return;
     }
+    clearTimeout(slow);
     if (!cfg.ok) {
       showError(errorText(cfg.error || 'server_error'), () => location.reload());
       return;
@@ -391,7 +401,8 @@
     }
     tick(); // jika sudah lewat jam tutup, tick() langsung memuat hasil
     setInterval(tick, 1000);
-    setInterval(refreshConfig, 60000);
+    // Cek perubahan dari admin cukup tiap ±5 menit (acak) agar server tidak kebanjiran permintaan.
+    setInterval(refreshConfig, 240000 + Math.random() * 120000);
   }
 
   init();
