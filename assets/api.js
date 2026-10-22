@@ -8,13 +8,15 @@
 
   // Saat server penuh, Google bisa menggantung permintaan hingga ±1 menit lalu gagal.
   // Batasi tiap percobaan lalu ulangi dengan jeda acak agar tidak menyerbu server bersamaan.
+  // Vote diberi waktu lebih lama: mengulang terlalu cepat justru menambah antrean di server.
   const TIMEOUT_MS = 20000;
+  const VOTE_TIMEOUT_MS = 45000;
 
   async function request(params, body, tries) {
     let lastErr;
     for (let i = 0; i < tries; i++) {
       const ctrl = window.AbortController ? new AbortController() : null;
-      const timer = ctrl && setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+      const timer = ctrl && setTimeout(() => ctrl.abort(), body ? VOTE_TIMEOUT_MS : TIMEOUT_MS);
       try {
         const res = body
           ? await fetch(API_URL, {
@@ -39,9 +41,47 @@
     throw err;
   }
 
+  // Daftar house, jam tutup, dan hasil akhir disajikan sebagai file statis di GitHub Pages
+  // (data/*.json) agar ratusan pengunjung tidak semuanya membebani Apps Script.
+  async function staticJson(path) {
+    const res = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const date = Date.parse(res.headers.get('date') || '');
+    return { data: await res.json(), serverTime: isNaN(date) ? new Date() : new Date(date) };
+  }
+
+  async function staticConfig() {
+    const { data, serverTime } = await staticJson('data/config.json');
+    return {
+      ok: true,
+      serverTime: serverTime.toISOString(),
+      closeTime: data.closeTime,
+      closed: serverTime.getTime() >= new Date(data.closeTime).getTime(),
+      houses: data.houses,
+    };
+  }
+
+  async function staticResults() {
+    try {
+      const { data } = await staticJson('data/results.json');
+      return data && data.ok ? data : null;
+    } catch (e) {
+      return null; // belum dipublikasikan
+    }
+  }
+
   const remote = {
-    config: () => request({ action: 'config' }, null, 4),
-    results: () => request({ action: 'results' }, null, 4),
+    async config() {
+      try {
+        return await staticConfig();
+      } catch (e) {
+        return request({ action: 'config' }, null, 4);
+      }
+    },
+    staticResults,
+    async results() {
+      return (await staticResults()) || request({ action: 'results' }, null, 4);
+    },
     async vote(payload) {
       // voteId membuat retry aman: server tidak menghitung suara yang sama dua kali.
       for (let i = 0; i < 3; i++) {
@@ -100,6 +140,7 @@
       const db = loadDb();
       return { ok: true, serverTime: new Date().toISOString(), closeTime: new Date(db.settings.closeTime).toISOString(), closed: isClosed(db), houses: db.houses };
     },
+    staticResults: async () => null,
     async results() {
       await sleep(350);
       const db = loadDb();

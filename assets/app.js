@@ -242,10 +242,13 @@
   async function loadResults(spread) {
     state.resultsRequested = true;
     if ($('#viewResults').hidden) show('viewLoading');
-    // Tepat jam tutup semua perangkat meminta hasil bersamaan; sebar dalam 0–25 detik.
+    // Tepat jam tutup semua perangkat meminta hasil bersamaan. Coba file hasil statis dulu;
+    // jika belum ada, tunggu acak 30–90 detik sebelum bertanya ke Apps Script.
     if (spread) {
-      $('#viewLoading .loader').textContent = 'Menghitung hasil akhir…';
-      await new Promise((r) => setTimeout(r, Math.random() * 25000));
+      $('#viewLoading .loader').textContent = 'Voting ditutup. Menghitung hasil akhir…';
+      const ready = await Api.staticResults();
+      if (ready) return renderResults(ready);
+      await new Promise((r) => setTimeout(r, 30000 + Math.random() * 60000));
     }
     let res;
     try {

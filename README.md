@@ -55,6 +55,20 @@ Selama `API_URL` masih kosong, halaman berjalan dalam **MODE DEMO** (ada pita or
 3. **Pengaturan**: pastikan *Voting ditutup pada* = **22/10/2026 14:00** (WIB) dan kode guru = `2026`.
 4. Coba sekali dari HP, lalu tekan **Reset status voting perangkat ini** di panel admin, dan hapus baris uji coba di sheet `Votes`.
 
+## Mengurangi beban Apps Script (data statis)
+
+Apps Script hanya sanggup ±30 eksekusi bersamaan. Karena itu halaman voting membaca daftar house dan jam tutup dari **`data/config.json`** (disajikan GitHub Pages), dan hasil akhir dari **`data/results.json`** bila sudah ada. Apps Script hanya dipakai untuk mencatat suara.
+
+- Setelah mengubah house atau jam tutup di panel admin, jalankan lalu commit & push:
+  ```
+  node scripts/sync-config.mjs
+  ```
+- Setelah jam tutup, publikasikan hasil akhir lalu commit & push:
+  ```
+  node scripts/publish-results.mjs
+  ```
+  Sampai file ini ada, halaman tetap mengambil hasil dari Apps Script (dengan jeda acak 30–90 detik per pengunjung).
+
 ## Cara kerja & batasan
 
 - **Satu perangkat, satu suara.** Setelah memilih, tanda tersimpan di browser (localStorage + cookie), sehingga halaman menampilkan "Terima kasih" dan tidak bisa memilih lagi.

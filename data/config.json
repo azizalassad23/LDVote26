@@ -1,0 +1,121 @@
+{
+  "closeTime": "2026-10-22T07:00:00.000Z",
+  "houses": [
+    {
+      "id": "H048446ea",
+      "name": "Compass",
+      "display": "Kuliner - Aceh"
+    },
+    {
+      "id": "H793b9a61",
+      "name": "Ventela",
+      "display": "Photobooth - Sumut"
+    },
+    {
+      "id": "H56ec775d",
+      "name": "Brodo",
+      "display": "Photobooth - Sumbar"
+    },
+    {
+      "id": "Hbd6f220c",
+      "name": "Aerostreet",
+      "display": "Photobooth - Riau"
+    },
+    {
+      "id": "H79212677",
+      "name": "Kodachi",
+      "display": "Kuliner - Jambi"
+    },
+    {
+      "id": "H9a3cd8c9",
+      "name": "Ortuseight",
+      "display": "Photobooth - Sumsel"
+    },
+    {
+      "id": "Heccd3b95",
+      "name": "Erigo",
+      "display": "Kuliner - Bangka Belitung"
+    },
+    {
+      "id": "H70c5a031",
+      "name": "3Second",
+      "display": "Photobooth - Bengkulu"
+    },
+    {
+      "id": "Hd7411725",
+      "name": "Nevada",
+      "display": "Pameran - Lampung"
+    },
+    {
+      "id": "H69949792",
+      "name": "Greenlight",
+      "display": "Pameran - DKI Jakarta"
+    },
+    {
+      "id": "H19c3fbd1",
+      "name": "Roughneck 1991",
+      "display": "Kuliner - Banten"
+    },
+    {
+      "id": "He96012eb",
+      "name": "Mustika Ratu",
+      "display": "Photobooth - Jawa Barat"
+    },
+    {
+      "id": "H74d3b3a3",
+      "name": "Sari Ayu",
+      "display": "Kuliner - Jawa Tengah"
+    },
+    {
+      "id": "Hc9b6a1b5",
+      "name": "Viva",
+      "display": "Pameran - Jawa Timur"
+    },
+    {
+      "id": "Hce2b2405",
+      "name": "Wardah",
+      "display": "Kuliner - Yogyakarta"
+    },
+    {
+      "id": "H702edb06",
+      "name": "Purbasari",
+      "display": "Kuliner - Bali"
+    },
+    {
+      "id": "He2d363ad",
+      "name": "Herboist",
+      "display": "Pameran - NTT"
+    },
+    {
+      "id": "H98b1f7ac",
+      "name": "Eiger",
+      "display": "Kuliner - NTB"
+    },
+    {
+      "id": "Hac55a1a4",
+      "name": "Bodypack",
+      "display": "Pameran - Kalimantan"
+    },
+    {
+      "id": "H2e12c6ff",
+      "name": "Kalibre",
+      "display": "Kuliner - Sulawesi Utara"
+    },
+    {
+      "id": "Ha9aa5f10",
+      "name": "Visval",
+      "display": "Photobooth - Sulawesi Selatan"
+    },
+    {
+      "id": "Had42156b",
+      "name": "Exsport",
+      "display": "Kuliner - Maluku"
+    },
+    {
+      "id": "H29627edb",
+      "name": "Rei",
+      "display": "Pameran - Papua"
+    }
+  ],
+  "syncedAt": "2026-10-22T05:57:25.386Z"
+}
